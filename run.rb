@@ -16,7 +16,6 @@ gcb.list_builds(project_id: project_id, filter: 'status="SUCCESS"', page_size: 5
   if Time.at(build.finish_time.seconds) >= (Time.now - 900)
     image_id = build.results.images[0].name
     image_sha = build.results.images[0].digest
-    puts "#{image_id}@#{image_sha}"
 
     vulns = { 'HIGH' => 0, 'MEDIUM' => 0, 'LOW' => 0 }
     gcr.list_occurrences(parent: gcr.project_path(project: project_id), filter: "resourceUrl = \"https://#{image_id}@#{image_sha}\" AND kind = \"VULNERABILITY\"").each do |occurrence|
@@ -30,7 +29,8 @@ gcb.list_builds(project_id: project_id, filter: 'status="SUCCESS"', page_size: 5
         vulns['LOW'] += 1
       end
     end
-    puts "Found #{vulns}"
+
+    puts "#{Time.at(build.finish_time.seconds)} https://#{image_id}@#{image_sha} #{vulns}"
 
     notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK'], channel: ENV['SLACK_CHANNEL'], username: ENV['SLACK_USER']
     if vulns['HIGH'] == 0
