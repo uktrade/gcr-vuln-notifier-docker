@@ -2,5 +2,5 @@
 
 while true; do
   /run.rb
-  sleep 900
+  sleep $WAIT_TIMER
 done
