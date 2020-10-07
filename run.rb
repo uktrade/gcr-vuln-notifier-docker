@@ -5,14 +5,14 @@ require 'google-cloud-build'
 require 'google-cloud-container_analysis'
 require 'slack-notifier'
 
-# ENV['GOOGLE_CLOUD_KEYFILE'] = ".config/glcoud.json"
+# ENV['GOOGLE_APPLICATION_CREDENTIALS'] = ".config/glcoud.json"
 # ENV['SLACK_WEBHOOK'] = "https://hooks.slack.com/services/XXXX/YYYY/ABCD"
 # ENV['SLACK_CHANNEL'] = "#alerts"
 # ENV['SLACK_USER'] = "alerts"
 
 gcb = Google::Cloud::Build.cloud_build
 gcr = Google::Cloud::ContainerAnalysis.container_analysis.grafeas_client
-project_id = JSON.load(File.open(ENV['GOOGLE_CLOUD_KEYFILE']))['project_id']
+project_id = JSON.load(File.open(ENV['GOOGLE_APPLICATION_CREDENTIALS']))['project_id']
 
 gcb.list_builds(project_id: project_id, filter: 'status="SUCCESS"', page_size: 500).each do |build|
   if Time.at(build.finish_time.seconds) >= (Time.now - 900)
