@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 
-require 'gcloud'
+require 'google-cloud'
+require 'google-cloud-build'
+require 'google-cloud-container_analysis'
 require 'slack-notifier'
 
 # ENV['GOOGLE_CLOUD_KEYFILE'] = ".config/glcoud.json"
