@@ -17,8 +17,6 @@ GEM
       googleapis-common-protos-types (>= 1.0.4, < 2.0)
       googleauth (~> 0.9)
       grpc (~> 1.25)
-    gcloud (0.24.1)
-      google-cloud (~> 0.23)
     google-api-client (0.46.0)
       addressable (~> 2.5, >= 2.5.1)
       googleauth (~> 0.9)
@@ -328,7 +326,7 @@ PLATFORMS
 DEPENDENCIES
   bundler
   deep_merge
-  gcloud
+  google-cloud
   google-cloud-build
   google-cloud-container_analysis
   json
