@@ -68,6 +68,6 @@ gcb.list_builds(project_id: project_id, filter: 'status="SUCCESS"', page_size: 5
       footer_icon: "https://avatars2.githubusercontent.com/u/21046548?s=400&v=4",
       ts: "#{build.finish_time.seconds}"
     }
-    # notifier.post text: "", attachments: [message]
+    notifier.post text: "", attachments: [message]
   end
 end
