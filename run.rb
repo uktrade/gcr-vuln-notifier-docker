@@ -63,7 +63,7 @@ gcb.list_builds(project_id: project_id, filter: 'status="SUCCESS"', page_size: 2
         value: "#{vulns['LOW']}",
         short: true
       }],
-      author_name: "#{project_id}",
+      author_name: "<https://console.cloud.google.com/gcr/images/#{project_id}|ContainerAnalysis>",
       author_link: "https://#{image_id}@#{image_sha}",
       footer: "<#{build['log_url']}|Cloud Builder>",
       footer_icon: "https://avatars2.githubusercontent.com/u/21046548?s=400&v=4",
