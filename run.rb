@@ -14,10 +14,11 @@ gcb = Google::Cloud::Build.cloud_build
 gcr = Google::Cloud::ContainerAnalysis.container_analysis.grafeas_client
 project_id = JSON.load(File.open(ENV['GOOGLE_APPLICATION_CREDENTIALS']))['project_id']
 
-gcb.list_builds(project_id: project_id, filter: 'status="SUCCESS"', page_size: 500).each do |build|
-  if Time.at(build.finish_time.seconds) >= (Time.now - (ENV['WAIT_TIMER'].to_i + 120)) && Time.at(build.finish_time.seconds) <= (Time.now - (ENV['WAIT_TIMER'].to_i - 120))
+gcb.list_builds(project_id: project_id, filter: 'status="SUCCESS"', page_size: 200).each do |build|
+  if Time.at(build.finish_time.seconds) >= (Time.now - ENV['WAIT_TIMER'].to_i)
     image_id = build.results.images[0].name.sub(/:(.*)$/, '')
     image_sha = build.results.images[0].digest
+    image_tag = build['images'][0].match(/:(.*)$/)[1]
 
     vulns = { 'HIGH' => 0, 'MEDIUM' => 0, 'LOW' => 0 }
     gcr.list_occurrences(parent: gcr.project_path(project: project_id), filter: "resourceUrl = \"https://#{image_id}@#{image_sha}\" AND kind = \"VULNERABILITY\"").each do |occurrence|
@@ -46,7 +47,7 @@ gcb.list_builds(project_id: project_id, filter: 'status="SUCCESS"', page_size: 5
     end
     message = {
       fallback: "https://#{image_id}@#{image_sha}",
-      title: "#{image_id}@#{image_sha}",
+      title: "#{image_id}@#{image_tag}",
       title_link: "https://#{image_id}@#{image_sha}",
       color: "#{message_colour}",
       fields: [{
@@ -64,7 +65,7 @@ gcb.list_builds(project_id: project_id, filter: 'status="SUCCESS"', page_size: 5
       }],
       author_name: "#{project_id}",
       author_link: "https://#{image_id}@#{image_sha}",
-      footer: "#{build['log_url']}",
+      footer: "<#{build['log_url']}|Cloud Builder>",
       footer_icon: "https://avatars2.githubusercontent.com/u/21046548?s=400&v=4",
       ts: "#{build.finish_time.seconds}"
     }
