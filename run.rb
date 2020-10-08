@@ -47,7 +47,7 @@ gcb.list_builds(project_id: project_id, filter: 'status="SUCCESS"', page_size: 2
     end
     message = {
       fallback: "https://#{image_id}@#{image_sha}",
-      title: "#{image_id}@#{image_tag}",
+      title: "#{image_id}:#{image_tag}",
       title_link: "https://#{image_id}@#{image_sha}",
       color: "#{message_colour}",
       fields: [{
