@@ -15,7 +15,7 @@ gcr = Google::Cloud::ContainerAnalysis.container_analysis.grafeas_client
 project_id = JSON.load(File.open(ENV['GOOGLE_APPLICATION_CREDENTIALS']))['project_id']
 
 gcb.list_builds(project_id: project_id, filter: 'status="SUCCESS"', page_size: 500).each do |build|
-  if Time.at(build.finish_time.seconds) >= (Time.now - ENV['WAIT_TIMER'].to_i) && Time.at(build.finish_time.seconds) <= (Time.now - (ENV['WAIT_TIMER'].to_i / 3))
+  if Time.at(build.finish_time.seconds) >= (Time.now - (ENV['WAIT_TIMER'].to_i + 120)) && Time.at(build.finish_time.seconds) <= (Time.now - (ENV['WAIT_TIMER'].to_i - 120))
     image_id = build.results.images[0].name.sub(/:(.*)$/, '')
     image_sha = build.results.images[0].digest
 
@@ -68,6 +68,6 @@ gcb.list_builds(project_id: project_id, filter: 'status="SUCCESS"', page_size: 5
       footer_icon: "https://avatars2.githubusercontent.com/u/21046548?s=400&v=4",
       ts: "#{build.finish_time.seconds}"
     }
-    notifier.post text: "", attachments: [message]
+    # notifier.post text: "", attachments: [message]
   end
 end
