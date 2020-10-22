@@ -56,19 +56,19 @@ while wait_timer > 0
         title_link: "https://#{image_id}@#{image_sha}",
         color: "#{message_colour}",
         fields: [{
-          title: "Critical Severity",
+          title: "Critical",
           value: "#{vulns['CRITICAL']}",
           short: true
         },{
-          title: "High Severity",
+          title: "High",
           value: "#{vulns['HIGH']}",
           short: true
         },{
-          title: "Medium Severity",
+          title: "Medium",
           value: "#{vulns['MEDIUM']}",
           short: true
         },{
-          title: "Low Severity",
+          title: "Low",
           value: "#{vulns['LOW']}",
           short: true
         }],
