@@ -5,13 +5,14 @@ require 'google-cloud-container_analysis'
 require 'slack-notifier'
 require 'logger'
 
-# ENV['WAIT_TIMER'] = 900
+# ENV['WAIT_TIMER'] = 600
 # ENV['GOOGLE_APPLICATION_CREDENTIALS'] = ".config/glcoud.json"
 # ENV['SLACK_WEBHOOK'] = "https://hooks.slack.com/services/XXXX/YYYY/ABCD"
 # ENV['SLACK_CHANNEL'] = "#alerts"
 # ENV['SLACK_USER'] = "alerts"
 
-wait_timer = ENV['WAIT_TIMER'].nil? ? 300 : ENV['WAIT_TIMER'].to_i
+wait_timer = ENV['WAIT_TIMER'].nil? ? 600 : ENV['WAIT_TIMER'].to_i
+vuln_wait_timer = ENV['VULN_WAIT_TIMER'].nil? ? 180 : ENV['VULN_WAIT_TIMER'].to_i
 logger = Logger.new(STDOUT)
 
 gcb = Google::Cloud::Build.cloud_build
@@ -20,8 +21,9 @@ project_id = JSON.load(File.open(ENV['GOOGLE_APPLICATION_CREDENTIALS']))['projec
 
 current_build_ts = Time.now
 while wait_timer > 0
+  logger.debug("#{current_build_ts - wait_timer - vuln_wait_timer} -- #{current_build_ts - vuln_wait_timer}")
   gcb.list_builds(project_id: project_id, filter: 'status="SUCCESS"', page_size: 200).each do |build|
-    if Time.at(build.finish_time.seconds) >= (current_build_ts - wait_timer)
+    if Time.at(build.finish_time.seconds) >= (current_build_ts - wait_timer - vuln_wait_timer) && Time.at(build.finish_time.seconds) <= (current_build_ts - vuln_wait_timer)
       image_id = build.results.images[0].name.sub(/:(.*)$/, '')
       image_sha = build.results.images[0].digest
       image_tag = build['images'][0].match(/:(.*)$/)[1]
