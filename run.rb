@@ -80,7 +80,7 @@ while wait_timer > 0
       }
       notifier.post text: "", attachments: [message]
     end
-    current_build_ts += wait_timer
-    sleep wait_timer
   end
+  current_build_ts += wait_timer
+  sleep wait_timer
 end
