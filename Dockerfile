@@ -4,6 +4,6 @@ COPY Gemfile* /tmp/
 RUN gem install bundler && \
     bundle check || bundle install --gemfile=/tmp/Gemfile
 
-COPY run.* /
+COPY run.rb /
 
-ENTRYPOINT ["/run.sh"]
+ENTRYPOINT ["/run.rb"]
