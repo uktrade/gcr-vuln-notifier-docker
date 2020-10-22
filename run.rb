@@ -3,6 +3,7 @@
 require 'google-cloud-build'
 require 'google-cloud-container_analysis'
 require 'slack-notifier'
+require 'logger'
 
 # ENV['WAIT_TIMER'] = 900
 # ENV['GOOGLE_APPLICATION_CREDENTIALS'] = ".config/glcoud.json"
@@ -11,6 +12,8 @@ require 'slack-notifier'
 # ENV['SLACK_USER'] = "alerts"
 
 wait_timer = ENV['WAIT_TIMER'].nil? ? 300 : ENV['WAIT_TIMER'].to_i
+logger = Logger.new(STDOUT)
+
 gcb = Google::Cloud::Build.cloud_build
 gcr = Google::Cloud::ContainerAnalysis.container_analysis.grafeas_client
 project_id = JSON.load(File.open(ENV['GOOGLE_APPLICATION_CREDENTIALS']))['project_id']
@@ -38,7 +41,7 @@ while wait_timer > 0
         end
       end
 
-      puts "#{Time.at(build.finish_time.seconds)} https://#{image_id}@#{image_sha} #{vulns}"
+      logger.info("#{Time.at(build.finish_time.seconds)} https://#{image_id}@#{image_sha} #{vulns}")
 
       notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK'], channel: ENV['SLACK_CHANNEL'], username: ENV['SLACK_USER']
       if vulns['HIGH'] == 0 && vulns['CRITICAL'] == 0
